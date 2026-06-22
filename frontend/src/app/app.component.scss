@@ -1,0 +1,750 @@
+// ==================== Variables ====================
+$primary: #4f46e5;
+$primary-light: #6366f1;
+$primary-dark: #4338ca;
+$success: #10b981;
+$danger: #ef4444;
+$warning: #f59e0b;
+$gray-50: #f9fafb;
+$gray-100: #f3f4f6;
+$gray-200: #e5e7eb;
+$gray-300: #d1d5db;
+$gray-400: #9ca3af;
+$gray-500: #6b7280;
+$gray-600: #4b5563;
+$gray-700: #374151;
+$gray-800: #1f2937;
+$gray-900: #111827;
+$white: #ffffff;
+$shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+$shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+$shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+$shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+$radius: 8px;
+$radius-lg: 12px;
+$transition: all 0.2s ease;
+
+// ==================== Container ====================
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  color: $gray-800;
+}
+
+// ==================== Header ====================
+header {
+  text-align: center;
+  margin-bottom: 24px;
+  padding: 20px;
+  background: linear-gradient(135deg, $primary, $primary-light);
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  
+  h1 {
+    color: $white;
+    margin: 0;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+  }
+}
+
+// ==================== Error Banner ====================
+.error-banner {
+  background: linear-gradient(to right, #fee2e2, #fecaca);
+  color: #991b1b;
+  padding: 12px 20px;
+  border-radius: $radius;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: $shadow-sm;
+  animation: slideDown 0.3s ease;
+  
+  .close-btn {
+    background: none;
+    border: none;
+    color: #991b1b;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 0 8px;
+    line-height: 1;
+    
+    &:hover { color: #7f1d1d; }
+  }
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+// ==================== Main Content ====================
+.main-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .main-content {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ==================== Section Common ====================
+section {
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-md;
+  overflow: hidden;
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: $gray-50;
+  border-bottom: 1px solid $gray-200;
+  
+  h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: $gray-800;
+  }
+  
+  .count-badge {
+    background: $primary;
+    color: $white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+// ==================== Filter Tabs ====================
+.filter-tabs {
+  display: flex;
+  gap: 4px;
+  padding: 12px 16px;
+  background: $gray-50;
+  border-bottom: 1px solid $gray-200;
+  
+  button {
+    padding: 8px 16px;
+    border: none;
+    background: transparent;
+    color: $gray-600;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: $transition;
+    
+    &:hover {
+      background: $gray-200;
+      color: $gray-800;
+    }
+    
+    &.active {
+      background: $primary;
+      color: $white;
+    }
+    
+    &.overdue-btn {
+      margin-left: auto;
+      color: $warning;
+      
+      &:hover, &.active {
+        background: $warning;
+        color: $white;
+      }
+    }
+  }
+}
+
+// ==================== Todo Form ====================
+.todo-form {
+  display: flex;
+  gap: 8px;
+  padding: 16px;
+  background: $white;
+  border-bottom: 1px solid $gray-200;
+  
+  .title-input {
+    flex: 2;
+    min-width: 0;
+  }
+  
+  .description-input {
+    flex: 2;
+    min-width: 0;
+    resize: vertical;
+    min-height: 38px;
+    max-height: 100px;
+  }
+  
+  .date-input {
+    flex: 1;
+    min-width: 140px;
+  }
+}
+
+.todo-input {
+  padding: 10px 12px;
+  border: 1px solid $gray-300;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: $transition;
+  font-family: inherit;
+  
+  &:focus {
+    outline: none;
+    border-color: $primary;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+  }
+}
+
+.submit-btn {
+  padding: 10px 18px;
+  background: $primary;
+  color: $white;
+  border: none;
+  border-radius: 6px;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover:not(:disabled) {
+    background: $primary-dark;
+    transform: scale(1.05);
+  }
+  
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+// ==================== Todo List ====================
+.todo-list {
+  max-height: 500px;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: $gray-400;
+  
+  p {
+    margin: 0;
+    font-size: 15px;
+  }
+}
+
+// ==================== Todo Item ====================
+.todo-item {
+  display: flex;
+  align-items: flex-start;
+  padding: 12px;
+  border-radius: $radius;
+  margin-bottom: 6px;
+  transition: $transition;
+  border: 1px solid transparent;
+  
+  &:hover {
+    background: $gray-50;
+    border-color: $gray-200;
+  }
+  
+  &.completed {
+    opacity: 0.6;
+    
+    .todo-title {
+      text-decoration: line-through;
+      color: $gray-400;
+    }
+  }
+  
+  &.overdue {
+    border-color: #fecaca;
+    background: #fef2f2;
+  }
+}
+
+.todo-main {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+}
+
+.todo-checkbox {
+  padding-top: 2px;
+  
+  input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: $success;
+  }
+}
+
+.todo-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.todo-title {
+  margin: 0 0 4px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: $gray-800;
+}
+
+.todo-desc {
+  margin: 0 0 6px 0;
+  font-size: 13px;
+  color: $gray-500;
+  line-height: 1.4;
+}
+
+.todo-meta {
+  display: flex;
+  gap: 8px;
+}
+
+.date-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: $gray-100;
+  color: $gray-600;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  
+  &.overdue {
+    background: #fecaca;
+    color: #991b1b;
+  }
+}
+
+.todo-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: $transition;
+}
+
+.todo-item:hover .todo-actions {
+  opacity: 1;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: $transition;
+  
+  svg {
+    pointer-events: none;
+  }
+  
+  &.edit-btn {
+    background: $gray-100;
+    color: $gray-600;
+    
+    &:hover {
+      background: $primary;
+      color: $white;
+    }
+  }
+  
+  &.delete-btn {
+    background: $gray-100;
+    color: $gray-500;
+    
+    &:hover {
+      background: $danger;
+      color: $white;
+    }
+  }
+  
+  &.save-btn {
+    background: $success;
+    color: $white;
+    
+    &:hover {
+      background: #059669;
+    }
+  }
+  
+  &.cancel-btn {
+    background: $gray-200;
+    color: $gray-600;
+    
+    &:hover {
+      background: $gray-300;
+    }
+  }
+}
+
+// ==================== Edit Form ====================
+.todo-edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  
+  .edit-title-input { width: 100%; }
+  .edit-desc-input { width: 100%; min-height: 50px; resize: vertical; }
+  .edit-date-input { width: 100%; }
+  
+  .edit-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    
+    .action-btn {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// ==================== Calendar ====================
+.calendar-section {
+  position: relative;
+}
+
+.calendar-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: $gray-50;
+  border-bottom: 1px solid $gray-200;
+  
+  .nav-btn {
+    width: 36px;
+    height: 36px;
+    border: 1px solid $gray-300;
+    background: $white;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: $transition;
+    
+    &:hover {
+      background: $primary;
+      color: $white;
+      border-color: $primary;
+    }
+  }
+  
+  .calendar-title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: $gray-800;
+    text-transform: capitalize;
+  }
+}
+
+// ==================== Calendar Grid ====================
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 1px;
+  background: $gray-200;
+  padding: 1px;
+}
+
+.day-header {
+  padding: 10px;
+  text-align: center;
+  background: $gray-100;
+  font-size: 12px;
+  font-weight: 600;
+  color: $gray-600;
+  text-transform: uppercase;
+}
+
+.day-cell {
+  position: relative;
+  min-height: 80px;
+  padding: 8px;
+  background: $white;
+  cursor: pointer;
+  transition: $transition;
+  
+  &:hover {
+    background: $gray-50;
+  }
+  
+  &.other-month {
+    background: $gray-50;
+    color: $gray-400;
+    
+    .day-number {
+      color: $gray-400;
+    }
+  }
+  
+  &.today {
+    background: #eef2ff;
+    
+    .day-number {
+      background: $primary;
+      color: $white;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+  
+  &.selected {
+    box-shadow: inset 0 0 0 2px $primary;
+  }
+  
+  &.has-content {
+    background: #fafbff;
+  }
+  
+  .day-number {
+    font-size: 13px;
+    font-weight: 500;
+    color: $gray-700;
+  }
+  
+  .day-indicators {
+    display: flex;
+    gap: 3px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  display: inline-block;
+  
+  &.todo-dot {
+    background: $primary;
+  }
+  
+  &.todo-dot.completed-dot {
+    background: $success;
+    opacity: 0.5;
+  }
+  
+  &.event-dot {
+    background: $warning;
+  }
+}
+
+// ==================== Selected Date Panel ====================
+.selected-date-panel {
+  padding: 16px;
+  border-top: 1px solid $gray-200;
+  background: $gray-50;
+}
+
+.panel-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  
+  h4 {
+    margin: 0;
+    font-size: 14px;
+    color: $gray-700;
+  }
+  
+  .add-event-btn {
+    padding: 6px 12px;
+    background: $primary;
+    color: $white;
+    border: none;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: $transition;
+    
+    &:hover {
+      background: $primary-dark;
+    }
+  }
+}
+
+.event-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  background: $white;
+  border-radius: $radius;
+  margin-bottom: 12px;
+  box-shadow: $shadow-sm;
+  
+  .event-input {
+    padding: 8px 10px;
+    border: 1px solid $gray-300;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: inherit;
+    
+    &:focus {
+      outline: none;
+      border-color: $primary;
+      box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.1);
+    }
+  }
+  
+  .time-input {
+    width: 120px;
+  }
+  
+  .event-actions {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+}
+
+.events-list {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.event-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  background: $white;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border-left: 3px solid $warning;
+  
+  .event-content {
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .event-title {
+    margin: 0 0 2px 0;
+    font-size: 13px;
+    font-weight: 500;
+    color: $gray-800;
+  }
+  
+  .event-time {
+    margin: 0 0 2px 0;
+    font-size: 12px;
+    color: $gray-500;
+    font-family: monospace;
+  }
+  
+  .event-desc {
+    margin: 0;
+    font-size: 12px;
+    color: $gray-500;
+  }
+}
+
+.todo-item-in-calendar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  background: $white;
+  border-radius: 6px;
+  margin-bottom: 6px;
+  border-left: 3px solid $primary;
+  font-size: 13px;
+  
+  .todo-checkbox-sm {
+    input[type="checkbox"] {
+      width: 14px;
+      height: 14px;
+      cursor: pointer;
+      accent-color: $success;
+    }
+  }
+  
+  .completed {
+    text-decoration: line-through;
+    color: $gray-400;
+  }
+}
+
+// ==================== Legend ====================
+.legend {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  padding: 16px;
+  margin-top: 16px;
+  background: $white;
+  border-radius: $radius-lg;
+  box-shadow: $shadow;
+  
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: $gray-600;
+  }
+}
+
+// ==================== Loading ====================
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: $gray-400;
+  font-size: 15px;
+}
+
+// ==================== Scrollbar ====================
+.todo-list, .events-list {
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: $gray-100;
+    border-radius: 3px;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: $gray-300;
+    border-radius: 3px;
+    
+    &:hover {
+      background: $gray-400;
+    }
+  }
+}

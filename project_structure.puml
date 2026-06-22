@@ -1,0 +1,66 @@
+@startuml
+title Структура проекта Todo List with Calendar
+
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam packageStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+
+left to right direction
+
+package "Backend" #LightBlue {
+    [main.py] as main_py
+    [requirements.txt] as requirements
+    [run.sh] as run_sh
+    [data.json] as data_json
+    [.venv/] as venv
+}
+
+package "Frontend" #LightGreen {
+    package "Root" {
+        [angular.json] as angular
+        [package.json] as package
+        [tsconfig.json] as tsconfig
+        [run.sh] as run_sh_fe
+    }
+    
+    package "src/app" #LightYellow {
+        [app.component.ts] as app_comp
+        [app.component.html] as app_html
+        [app.component.scss] as app_scss
+        [app.config.ts] as app_conf
+        [todo.service.ts] as todo_svc
+        [calendar.service.ts] as cal_svc
+        [models.ts] as models
+        [main.ts] as main_ts
+    }
+}
+
+data_json -.-> main_py : stores/retrieves
+main_py -.-> requirements : imports
+run_sh -.-> venv : activates
+run_sh -.-> main_py : runs
+
+run_sh_fe -.-> package : npm install
+run_sh_fe -.-> main_ts : runs
+main_ts -.-> app_conf : uses
+app_comp -.-> app_html : renders
+app_comp -.-> app_scss : styles
+app_comp -.-> todo_svc : uses
+app_comp -.-> cal_svc : uses
+todo_svc -.-> models : uses types
+cal_svc -.-> models : uses types
+
+note right of data_json
+  Хранилище данных:
+  - todos (массив)
+  - calendar (объект)
+end note
+
+note bottom of app_svc
+  HTTP клиент для
+  общения с бэкендом
+end note
+
+@enduml

@@ -1,0 +1,267 @@
+<div class="container">
+  <header>
+    <h1>{{ title }}</h1>
+  </header>
+
+  <!-- Error notification -->
+  <div *ngIf="error" class="error-banner" [class.show]="error">
+    <span>{{ error }}</span>
+    <button (click)="clearError()" class="close-btn">&times;</button>
+  </div>
+
+  <div class="main-content">
+    <!-- Todo Section -->
+    <section class="todo-section">
+      <div class="section-header">
+        <h2>Задачи</h2>
+        <span class="count-badge">{{ getCompletedCount() }}/{{ getTotalCount() }}</span>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filter-tabs">
+        <button 
+          [class.active]="filter === 'all'" 
+          (click)="filter = 'all'">Все</button>
+        <button 
+          [class.active]="filter === 'active'" 
+          (click)="filter = 'active'">Активные</button>
+        <button 
+          [class.active]="filter === 'completed'" 
+          (click)="filter = 'completed'">Выполненные</button>
+        <button 
+          [class.active]="filter === 'overdue'" 
+          (click)="loadOverdueTodos()" class="overdue-btn">
+          Просроченные
+        </button>
+      </div>
+
+      <!-- Add Todo Form -->
+      <form class="todo-form" (ngSubmit)="addTodo()">
+        <input 
+          type="text" 
+          [(ngModel)]="newTodo.title" 
+          name="title"
+          placeholder="Название задачи" 
+          required
+          class="todo-input title-input">
+        <textarea 
+          [(ngModel)]="newTodo.description" 
+          name="description"
+          placeholder="Описание" 
+          class="todo-input description-input"></textarea>
+        <input 
+          type="date" 
+          [(ngModel)]="newTodo.due_date" 
+          name="due_date"
+          class="todo-input date-input">
+        <button type="submit" class="submit-btn" [disabled]="isLoading">
+          {{ isLoading ? '...' : '+' }}
+        </button>
+      </form>
+
+      <!-- Todo List -->
+      <div class="todo-list" *ngIf="!isLoading; else loadingTemplate">
+        <div *ngIf="getFilteredTodos().length === 0" class="empty-state">
+          <p>Нет задач</p>
+        </div>
+
+        <div 
+          *ngFor="let todo of getFilteredTodos()" 
+          class="todo-item"
+          [class.completed]="todo.completed"
+          [class.overdue]="!todo.completed && todo.due_date && todo.due_date < todayStr">
+          
+          <div class="todo-main" *ngIf="editingTodo?.id !== todo.id">
+            <div class="todo-checkbox">
+              <input 
+                type="checkbox" 
+                [checked]="todo.completed"
+                (change)="toggleComplete(todo)">
+            </div>
+            <div class="todo-content">
+              <h3 class="todo-title">{{ todo.title }}</h3>
+              <p class="todo-desc" *ngIf="todo.description">{{ todo.description }}</p>
+              <div class="todo-meta" *ngIf="todo.due_date">
+                <span class="date-badge" [class.overdue]="!todo.completed && todo.due_date < todayStr">
+                  {{ todo.due_date }}
+                </span>
+              </div>
+            </div>
+            <div class="todo-actions">
+              <button (click)="startEditTodo(todo)" class="action-btn edit-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                </svg>
+              </button>
+              <button (click)="deleteTodo(todo.id!)" class="action-btn delete-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="3 6 5 6 21 6"/>
+                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Edit Todo Form -->
+          <div class="todo-edit-form" *ngIf="editingTodo?.id === todo.id">
+            <input 
+              type="text" 
+              [(ngModel)]="editingTodo!.title"
+              placeholder="Название"
+              class="todo-input edit-title-input">
+            <textarea 
+              [(ngModel)]="editingTodo!.description"
+              placeholder="Описание"
+              class="todo-input edit-desc-input"></textarea>
+            <input 
+              type="date" 
+              [(ngModel)]="editingTodo!.due_date"
+              class="todo-input edit-date-input">
+            <div class="edit-actions">
+              <button (click)="updateTodo(editingTodo!)" class="action-btn save-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              </button>
+              <button (click)="cancelEditTodo()" class="action-btn cancel-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="18" y1="6" x2="6" y2="18"/>
+                  <line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Calendar Section -->
+    <section class="calendar-section">
+      <div class="section-header">
+        <h2>Календарь</h2>
+      </div>
+
+      <!-- Calendar Navigation -->
+      <div class="calendar-nav">
+        <button (click)="prevMonth()" class="nav-btn"><</button>
+        <h3 class="calendar-title">{{ getMonthName() }} {{ currentMonth.getFullYear() }}</h3>
+        <button (click)="nextMonth()" class="nav-btn">></button>
+      </div>
+
+      <!-- Calendar Grid -->
+      <div class="calendar-grid">
+        <div class="day-header">Пн</div>
+        <div class="day-header">Вт</div>
+        <div class="day-header">Ср</div>
+        <div class="day-header">Чт</div>
+        <div class="day-header">Пт</div>
+        <div class="day-header">Сб</div>
+        <div class="day-header">Вс</div>
+
+        <div 
+          *ngFor="let day of getDaysInMonth(currentMonth.getFullYear(), currentMonth.getMonth())"
+          class="day-cell"
+          [class.other-month]="day.getMonth() !== currentMonth.getMonth()"
+          [class.today]="isToday(day)"
+          [class.selected]="isSelectedDate(formatDate(day))"
+          [class.has-content]="getEventsForDate(formatDate(day)).events.length > 0 || getEventsForDate(formatDate(day)).todos.length > 0"
+          (click)="selectDate(formatDate(day))">
+          
+          <span class="day-number">{{ day.getDate() }}</span>
+          
+          <!-- Todo indicators -->
+          <div class="day-indicators">
+            <span 
+              *ngFor="let todo of getEventsForDate(formatDate(day)).todos"
+              class="dot todo-dot"
+              [class.completed-dot]="todo.completed"
+              title="{{ todo.title }}">
+            </span>
+            <span 
+              *ngFor="let event of getEventsForDate(formatDate(day)).events"
+              class="dot event-dot"
+              title="{{ event.title }}">
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Selected Date Events -->
+      <div *ngIf="selectedDate" class="selected-date-panel">
+        <div class="panel-header">
+          <h4>{{ selectedDate }}</h4>
+          <button (click)="showEventForm = true; newEvent.date = selectedDate" class="add-event-btn">
+            + Событие
+          </button>
+        </div>
+
+        <!-- Add Event Form -->
+        <div *ngIf="showEventForm" class="event-form">
+          <input 
+            type="text" 
+            [(ngModel)]="newEvent.title" 
+            placeholder="Название события"
+            class="event-input">
+          <input 
+            type="time" 
+            [(ngModel)]="newEvent.start_time" 
+            class="event-input time-input">
+          <input 
+            type="time" 
+            [(ngModel)]="newEvent.end_time" 
+            class="event-input time-input">
+          <div class="event-actions">
+            <button (click)="addEvent()" class="action-btn save-btn">OK</button>
+            <button (click)="showEventForm = false" class="action-btn cancel-btn">Отмена</button>
+          </div>
+        </div>
+
+        <!-- Events List -->
+        <div class="events-list">
+          <div 
+            *ngFor="let event of getEventsForDate(selectedDate).events"
+            class="event-item">
+            <div class="event-content">
+              <h5 class="event-title">{{ event.title }}</h5>
+              <p class="event-time" *ngIf="event.start_time || event.end_time">
+                {{ event.start_time || '--:--' }} - {{ event.end_time || '--:--' }}
+              </p>
+              <p class="event-desc" *ngIf="event.description">{{ event.description }}</p>
+            </div>
+            <button (click)="deleteEvent(event.date)" class="action-btn delete-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="6" x2="6" y2="18"/>
+                <line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Todos for selected date -->
+          <div 
+            *ngFor="let todo of getEventsForDate(selectedDate).todos"
+            class="todo-item-in-calendar">
+            <div class="todo-checkbox-sm">
+              <input 
+                type="checkbox" 
+                [checked]="todo.completed"
+                (change)="toggleComplete(todo)">
+            </div>
+            <span [class.completed]="todo.completed">{{ todo.title }}</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <span class="legend-item"><span class="dot todo-dot"></span> Задача</span>
+    <span class="legend-item"><span class="dot todo-dot completed-dot"></span> Выполненная</span>
+    <span class="legend-item"><span class="dot event-dot"></span> Событие</span>
+  </div>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading">Загрузка...</div>
+</ng-template>
