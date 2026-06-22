@@ -1,5 +1,4 @@
-@startuml
-title Структура проекта Todo List with Calendar
+title Structure projects Todo List with Calendar
 
 skinparam backgroundColor #FFFFFF
 skinparam componentStyle rectangle
@@ -35,6 +34,10 @@ package "Frontend" #LightGreen {
         [models.ts] as models
         [main.ts] as main_ts
     }
+    
+    package "HTTP Client" #LightBlue {
+        [provideHttpClient()] as http_client
+    }
 }
 
 data_json -.-> main_py : stores/retrieves
@@ -51,16 +54,26 @@ app_comp -.-> todo_svc : uses
 app_comp -.-> cal_svc : uses
 todo_svc -.-> models : uses types
 cal_svc -.-> models : uses types
+app_conf -.-> http_client : provides
 
-note right of data_json
-  Хранилище данных:
-  - todos (массив)
-  - calendar (объект)
+note right of app_conf
+  Configuration: provideHttpClient() + provideRouter(routes)
 end note
 
-note bottom of app_svc
-  HTTP клиент для
-  общения с бэкендом
+note right of todo_svc
+  Service for managing todos (CRUD)
+end note
+
+note right of cal_svc
+  Service for working with calendar
+end note
+
+note right of data_json
+  Data storage: todos (array) + calendar (object)
+end note
+
+note right of http_client
+  HTTP client for backend communication
 end note
 
 @enduml
