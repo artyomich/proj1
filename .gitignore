@@ -28,6 +28,7 @@ yarn.lock
 dist/
 tmp/
 .cache/
+.angular/
 
 # IDE
 .vscode/
