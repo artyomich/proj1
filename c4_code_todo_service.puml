@@ -1,0 +1,78 @@
+@startuml C4_Code_TodoService
+
+title C4 Code Diagram - TodoService (Angular)
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+skinparam monochrome true
+
+' Для код-диаграмм лучше не强制 left to right, 
+' пусть PlantUML сам выстроит классы оптимально
+
+package "Angular Application" {
+    
+    package "Services" {
+        
+        ' Используем class, чтобы можно было описать методы внутри
+        class TodoService << @Injectable({providedIn: 'root'}) >> {
+            - apiUrl: string = "http://localhost:8000/api"
+            + getTodos(): Observable<Todo[]>
+            + getTodo(id: number): Observable<Todo>
+            + createTodo(todo: Omit<Todo, "id">): Observable<Todo>
+            + updateTodo(id: number, todo: Todo): Observable<Todo>
+            + deleteTodo(id: number): Observable<any>
+            + getOverdueTodos(): Observable<Todo[]>
+            + getTodosByDate(date: string): Observable<Todo[]>
+            + getCompletedCount(): Observable<number>
+            + getTotalCount(): Observable<number>
+        }
+        
+    }
+    
+    package "Models" {
+        
+        ' Используем interface для модели данных
+        interface Todo << TypeScript Interface >> {
+            + id?: number
+            + title: string
+            + description?: string
+            + due_date?: string
+            + completed: boolean
+            + size?: number
+        }
+        
+    }
+    
+    package "Dependencies" {
+        
+        ' Оставляем только реальные инжектируемые зависимости
+        class HttpClient << Angular Module >>
+        interface Observable << RxJS >>
+        
+    }
+    
+}
+
+' Пунктирные стрелки означают использование/зависимость (Dependency)
+TodoService ..> HttpClient : injects
+TodoService ..> Todo : uses type
+TodoService ..> Observable : returns
+
+note right of Todo
+  Matches backend 
+  Pydantic model exactly
+end note
+
+legend bottom
+  == Legend ==
+  << @Injectable(...) >> - Angular service decorator
+  << TypeScript Interface >> - Data shape contract
+  << Angular Module >> - Framework dependency
+  << RxJS >> - Reactive library type
+  <b>--></b>  - Usage / Dependency
+endlegend
+
+@enduml

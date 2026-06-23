@@ -1,0 +1,82 @@
+@startuml C4_Code_Backend
+
+title C4 Code Level - FastAPI Backend
+
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 11
+skinparam classAttributeIconSize 0
+skinparam shadowing false
+allowmixing
+
+top to bottom direction
+
+package "FastAPI Backend" {
+    
+    package "Pydantic Models" {
+        
+        class TodoModel << Pydantic.BaseModel >> {
+          + id: Optional[int]
+          + title: str
+          + description: Optional[str]
+          + due_date: Optional[str]
+          + completed: bool
+          + size: Optional[int]
+        }
+        
+        class CalModel << Pydantic.BaseModel >> {
+          + id: Optional[int]
+          + title: str
+          + description: Optional[str]
+          + date: str
+          + start_time: str
+          + end_time: str
+          + size: Optional[int]
+        }
+    }
+    
+    package "Data Access" {
+        rectangle "init_data()" as init_data
+        rectangle "load_data()" as load_data
+        rectangle "save_data()" as save_data
+    }
+    
+    package "Todo Endpoints" as todo_ep {
+        rectangle "GET /api/todos" as get_todos
+        rectangle "GET /api/todos/{id}" as get_todo
+        rectangle "POST /api/todos" as create_todo
+        rectangle "PUT /api/todos/{id}" as update_todo
+        rectangle "DELETE /api/todos/{id}" as delete_todo
+        rectangle "GET /api/todos/overdue" as get_overdue
+    }
+    
+    package "Calendar Endpoints" as cal_ep {
+        rectangle "GET /api/calendar/{date}" as get_cal
+        rectangle "POST /api/calendar" as create_cal
+        rectangle "PUT /api/calendar/{date}" as update_cal
+        rectangle "DELETE /api/calendar/{date}" as delete_cal
+        rectangle "GET /api/calendar/events" as get_all
+    }
+    
+    package "App Factory" {
+        rectangle "FastAPI Instance" as FastAPI
+        rectangle "CORS Middleware" as CORS
+    }
+}
+
+FastAPI --> CORS : adds
+init_data --> FastAPI : startup event
+
+FastAPI ..> todo_ep : registers routes
+FastAPI ..> cal_ep : registers routes
+
+todo_ep --> load_data : calls
+todo_ep --> save_data : calls
+cal_ep --> load_data : calls
+cal_ep --> save_data : calls
+
+todo_ep --> TodoModel : validates
+cal_ep --> CalModel : validates
+
+@enduml

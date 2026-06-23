@@ -4,11 +4,33 @@ Full-stack веб-приложение для управления задача�
 
 ## 📋 Содержание
 
-- [Структура проекта](#структура-проекта)
-- [Технологии](#технологии)
-- [Установка и запуск](#установка-и-запуск)
-- [API](#api)
-- [Диаграмма структуры](#диаграмма-структуры)
+- [Todo List with Calendar](#todo-list-with-calendar)
+  - [📋 Содержание](#-содержание)
+  - [📁 Структура проекта](#-структура-проекта)
+  - [🛠 Технологии](#-технологии)
+    - [Бэкенд](#бэкенд)
+    - [Фронтенд](#фронтенд)
+    - [Зависимости бэкенда (requirements.txt)](#зависимости-бэкенда-requirementstxt)
+    - [Зависимости фронтенда (package.json)](#зависимости-фронтенда-packagejson)
+  - [🚀 Установка и запуск](#-установка-и-запуск)
+    - [Бэкенд](#бэкенд-1)
+    - [Фронтенд](#фронтенд-1)
+  - [📡 API](#-api)
+    - [TODO](#todo)
+    - [Calendar](#calendar)
+  - [📊 Хранение данных](#-хранение-данных)
+  - [C1 — System Context Diagram](#c1--system-context-diagram)
+  - [C2 — Container Diagram](#c2--container-diagram)
+  - [C3 — Component Diagrams](#c3--component-diagrams)
+    - [C3 Backend (FastAPI)](#c3-backend-fastapi)
+    - [C3 Frontend (Angular)](#c3-frontend-angular)
+  - [C4 — Code Diagrams](#c4--code-diagrams)
+    - [C4 Code Backend](#c4-code-backend)
+    - [C4 Code TodoService](#c4-code-todoservice)
+  - [Структура проекта (визуально)](#структура-проекта-визуально)
+  - [🔧 Конфигурация](#-конфигурация)
+    - [CORS (backend/main.py)](#cors-backendmainpy)
+    - [Angular App Config (app.config.ts)](#angular-app-config-appconfigts)
 
 ## 📁 Структура проекта
 
@@ -175,38 +197,142 @@ bash run.sh
 }
 ```
 
-## 📐 Диаграмма структуры проекта
+## C1 — System Context Diagram
 
-```puml
-@startuml
-skinparam backgroundColor #FFFFFF
-skinparam componentFontSize 12
+![C1 System Context](c1_system_context.jpg)
 
-package "Backend" {
-  [main.py] as main
-  [requirements.txt] as req
-  [data.json] as data
-  [run.sh] as run_backend
-}
+**Описание:** Диаграмма контекста системы (C1) показывает взаимодействие внешних акторов с системой в целом на высшем уровне.
 
-package "Frontend" {
-  package "src/app" {
-    [app.component.ts] as comp
-    [app.service.ts] as svc
-    [models.ts] as models
-    [app.config.ts] as config
-  }
-  [package.json] as pkg
-  [angular.json] as ang
-  [run.sh] as run_frontend
-}
+- **User (End User)** — конечный пользователь, который аутентифицируется и взаимодействует с системой
+- **Todo List with Calendar System** — основная система в целом
+- **Browser (Chrome/Firefox/Edge)** — веб-браузер, через который пользователь получает Angular SPA
+- **File System (data.json)** — серверное хранилище данных
 
-main --> data : reads/writes
-comp --> svc : uses
-svc --> main : HTTP REST
+**Связи:**
+- Пользователь → Система: аутентификация и взаимодействие
+- Система → Браузер: выдача Angular SPA
+- Система → Файловая система: CRUD-операции
+- Пользователь → Браузер: просмотр интерфейса
 
-@enduml
-```
+---
+
+## C2 — Container Diagram
+
+![C2 Containers](c2_containers.jpg)
+
+**Описание:** Диаграмма контейнеров (C2) показывает высокоуровневую архитектуру приложения и взаимодействие между контейнерами.
+
+- **User (End User)** — конечный пользователь
+- **Web Browser** — внешний контейнер (external), используется для доступа к приложению
+- **Todo List with Calendar System** — основная система
+- **File System (data.json)** — внешний контейнер хранилища
+
+**Связи:**
+- Пользователь → Браузер: использует
+- Браузер → Система: HTTP-запросы / просмотр интерфейса
+- Система → Файловая система: CRUD-операции
+
+---
+
+## C3 — Component Diagrams
+
+### C3 Backend (FastAPI)
+
+![C3 Components Backend](c3_components_backend.jpg)
+
+**Описание:** Диаграмма компонентов бэкенда показывает внутреннюю структуру FastAPI-приложения.
+
+**Компоненты:**
+- **API Layer** — слой API с эндпоинтами для TODO и Calendar
+- **Todo Endpoints** — `GET/POST/PUT/DELETE /api/todos`, `GET /api/todos/overdue`
+- **Calendar Endpoints** — `GET/POST/PUT/DELETE /api/calendar`, `GET /api/calendar/events`
+- **Validation Layer** — Pydantic модели (Todo, CalendarEvent)
+- **Data Access Layer** — функции `load_data()`, `save_data()`, `init_data()`
+- **Middleware** — CORS Middleware
+- **Entry Point** — uvicorn.run()
+
+**Связи:**
+- Эндпоинты → Data Access Layer: CRUD-операции
+- Data Access Layer → data.json: чтение/запись
+- Pydantic модели: валидация входных данных
+
+### C3 Frontend (Angular)
+
+![C3 Components Frontend](c3_components_frontend.jpg)
+
+**Описание:** Диаграмма компонентов фронтенда показывает структуру Angular-приложения.
+
+**Компоненты:**
+- **Root Component** — `app.component.ts/html/scss`
+- **Services** — `todo.service.ts`, `calendar.service.ts`
+- **Models** — `models.ts` (интерфейсы TypeScript)
+- **Configuration** — `app.config.ts`, `app.routes.ts`
+- **Entry Point** — `main.ts`
+
+**Связи:**
+- Компонент → Сервисы: использование
+- Сервисы → Модели: использование типов
+- Сервисы → Backend API: HTTP REST запросы
+
+---
+
+## C4 — Code Diagrams
+
+### C4 Code Backend
+
+![C4 Code Backend](c4_code_backend.jpg)
+
+**Описание:** Диаграмма кода бэкенда показывает детализированную структуру FastAPI-приложения на уровне классов.
+
+**Элементы:**
+- **Pydantic Models** — `TodoModel` и `CalModel` с полями данных
+- **Data Access** — функции `init_data()`, `load_data()`, `save_data()`
+- **Todo Endpoints** — REST эндпоинты для TODO
+- **Calendar Endpoints** — REST эндпоинты для Calendar
+- **App Factory** — FastAPI Instance + CORS Middleware
+
+**Связи:**
+- FastAPI → CORS: добавление middleware
+- Эндпоинты → Pydantic модели: валидация
+- Эндпоинты → Data Access: чтение/запись данных
+
+### C4 Code TodoService
+
+![C4 Code TodoService](c4_code_todo_service.jpg)
+
+**Описание:** Диаграмма кода TodoService показывает детализированную структуру Angular-сервиса для управления TODO.
+
+**Элементы:**
+- **TodoService** — Angular сервис с декоратором `@Injectable({providedIn: 'root'})`
+  - `getTodos()` — получить все задачи
+  - `getTodo(id)` — получить задачу по ID
+  - `createTodo(todo)` — создать задачу
+  - `updateTodo(id, todo)` — обновить задачу
+  - `deleteTodo(id)` — удалить задачу
+  - `getOverdueTodos()` — получить просроченные задачи
+  - `getTodosByDate(date)` — получить задачи на дату
+  - `getCompletedCount()` — получить количество выполненных
+  - `getTotalCount()` — получить общее количество
+- **Todo Interface** — TypeScript интерфейс, соответствующий Pydantic модели
+- **Зависимости** — HttpClient, Observable (RxJS)
+
+**Связи:**
+- TodoService → HttpClient: внедрение зависимостей
+- TodoService → Todo: использование типа
+- TodoService → Observable: возврат значений
+
+---
+
+## Структура проекта (визуально)
+
+![Project Structure](project_structure.jpg)
+
+Диаграмма структуры проекта показывает организацию файлов и директорий приложения:
+- **Backend** — бэкенд-часть на FastAPI (`main.py`, `requirements.txt`, `run.sh`, `data.json`, `.venv/`)
+- **Frontend** — фронтенд на Angular (angular.json, package.json, tsconfig.json, run.sh, src/app/)
+- **src/app** — основной код приложения: компоненты, сервисы, модели, конфигурация
+- Связи между файлами показывают зависимости и взаимодействие (импорт, запуск, хранение данных)
+
 
 ## 🔧 Конфигурация
 
@@ -231,7 +357,3 @@ export const appConfig: ApplicationConfig = {
   ]
 };
 ```
-
----
-
-Создано для проекта Todo List with Calendar.

@@ -7,8 +7,9 @@ import { Todo } from './models';
   providedIn: 'root'
 })
 export class TodoService {
-  private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
+
+  constructor(private http: HttpClient) {}
 
   getTodos(): Observable<Todo[]> {
     return this.http.get<Todo[]>(`${this.apiUrl}/todos`);

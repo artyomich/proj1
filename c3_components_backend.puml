@@ -1,0 +1,97 @@
+@startuml C3_Components_Backend
+
+title C3 Component Diagram - FastAPI Backend
+
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+
+left to right direction
+
+package "FastAPI Backend" #LightBlue {
+    
+    package "API Layer" #LightYellow {
+        component "[main.py]" as main_py
+        
+        package "Todo Endpoints" as todo_ep {
+            component "GET /api/todos" as get_todos
+            component "GET /api/todos/{id}" as get_todo
+            component "POST /api/todos" as create_todo
+            component "PUT /api/todos/{id}" as update_todo
+            component "DELETE /api/todos/{id}" as delete_todo
+            component "GET /api/todos/overdue" as get_overdue
+        }
+        
+        package "Calendar Endpoints" as cal_ep {
+            component "GET /api/calendar/{date}" as get_cal_event
+            component "POST /api/calendar" as create_cal_event
+            component "PUT /api/calendar/{date}" as update_cal_event
+            component "DELETE /api/calendar/{date}" as delete_cal_event
+            component "GET /api/calendar/events" as get_all_events
+        }
+    }
+    
+    package "Validation Layer" as validation {
+        component "Todo (Pydantic)" as todo_model
+        component "CalendarEvent (Pydantic)" as cal_model
+    }
+    
+    package "Data Access Layer" as dal {
+        component "load_data()" as load_data
+        component "save_data(data)" as save_data
+        component "init_data()" as init_data
+    }
+    
+    package "Middleware" as middleware {
+        component "CORS Middleware" as cors
+    }
+    
+    package "Entry Point" as entry {
+        component "uvicorn.run()" as uvicorn
+    }
+}
+
+package "Storage" #LightYellow {
+    component "[data.json]" as json_file
+}
+
+main_py --> todo_ep
+main_py --> cal_ep
+main_py --> validation
+main_py --> dal
+main_py --> middleware
+main_py --> entry
+
+todo_ep --> dal : CRUD operations
+cal_ep --> dal : CRUD operations
+
+dal --> json_file : Read/Write
+
+validation --> todo_model : validates Todo
+validation --> cal_model : validates CalendarEvent
+
+entry --> main_py : starts server on 0.0.0.0:8000
+
+note right of todo_model
+  Todo Pydantic model:
+  - id: Optional[int]
+  - title: str
+  - description: Optional[str]
+  - due_date: Optional[str]
+  - completed: bool
+  - size: Optional[int]
+end note
+
+note right of cal_model
+  CalendarEvent Pydantic model:
+  - id: Optional[int]
+  - title: str
+  - description: Optional[str]
+  - date: str
+  - start_time: str
+  - end_time: str
+  - size: Optional[int]
+end note
+
+@enduml

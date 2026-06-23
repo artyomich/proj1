@@ -1,0 +1,38 @@
+@startuml C1_System_Context
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+
+' Задаем цвета для C4-стилистики
+skinparam rectangle {
+    BackgroundColor<<system>> #LightBlue
+    BorderColor<<system>> #1168BD
+    BackgroundColor<<external>> #LightYellow
+    BorderColor<<external>> #999999
+}
+
+top to bottom direction
+
+actor "User (End User)" as user
+
+rectangle "Web Browser\n(Chrome/Firefox/Edge)" <<external>> as browser
+rectangle "Todo List with Calendar System" <<system>> as system
+rectangle "File System\n(data.json)" <<external>> as storage
+
+' Логичные связи
+user --> browser : Uses
+browser --> system : HTTP requests / Views UI
+system --> storage : CRUD operations
+
+note right of user
+  Manages todos and 
+  calendar events
+end note
+
+note left of storage
+  Server-side persistent 
+  JSON storage
+end note
+
+@enduml

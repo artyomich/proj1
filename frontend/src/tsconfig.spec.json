@@ -1,0 +1,20 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/spec",
+    "types": [
+      "vitest/globals",
+      "jest",
+      "node"
+    ],
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  },
+  "files": [
+    "vitest.setup.ts"
+  ],
+  "include": [
+    "**/*.spec.ts",
+    "**/*.d.ts"
+  ]
+}

@@ -1,0 +1,93 @@
+@startuml C3_Components
+
+title C3 Component Diagram - Angular Frontend
+
+skinparam backgroundColor #FFFFFF
+skinparam componentStyle rectangle
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+
+left to right direction
+
+package "Angular Application" #LightGreen {
+    
+    package "Root Component" #LightYellow {
+        component "[app.component.ts]" as app_comp
+        component "[app.component.html]" as app_html
+        component "[app.component.scss]" as app_scss
+    }
+    
+    package "Services" #LightBlue {
+        component "[todo.service.ts]" as todo_svc
+        component "[calendar.service.ts]" as cal_svc
+    }
+    
+    package "Models" #LightGray {
+        component "[models.ts]" as models
+    }
+    
+    package "Configuration" #LightYellow {
+        component "[app.config.ts]" as app_conf
+        component "[app.routes.ts]" as app_routes
+    }
+    
+    package "Entry Point" #LightGray {
+        component "[main.ts]" as main_ts
+    }
+    
+    package "Routing" #LightGray {
+        component "[app.routes.ts]" as routes
+    }
+}
+
+package "Backend API" #LightBlue {
+    component "[main.py]" as backend_main
+    component "[data.json]" as backend_storage
+}
+
+app_comp --> app_html : renders
+app_comp --> app_scss : styles
+app_comp --> todo_svc : uses
+app_comp --> cal_svc : uses
+
+todo_svc --> models : uses Todo
+
+cal_svc --> models : uses CalendarEvent
+
+app_conf --> todo_svc : provides
+app_conf --> cal_svc : provides
+
+main_ts --> app_conf : bootstraps
+main_ts --> routes : configures
+
+app_comp --> backend_main : HTTP REST
+
+todo_svc --> backend_main : GET/POST/PUT/DELETE /api/todos
+
+cal_svc --> backend_main : GET/POST/PUT/DELETE /api/calendar
+
+backend_main --> backend_storage : Read/Write
+
+note right of todo_svc
+  TodoService methods:
+  - getTodos()
+  - getTodo(id)
+  - createTodo(todo)
+  - updateTodo(id, todo)
+  - deleteTodo(id)
+  - getOverdueTodos()
+  - getTodosByDate(date)
+  - getCompletedCount()
+  - getTotalCount()
+end note
+
+note right of cal_svc
+  CalendarService methods:
+  - getEvents()
+  - getEventByDate(date)
+  - createEvent(event)
+  - updateEvent(date, event)
+  - deleteEvent(date)
+end note
+
+@enduml

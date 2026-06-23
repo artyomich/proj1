@@ -1,3 +1,4 @@
+@startuml
 title Structure projects Todo List with Calendar
 
 skinparam backgroundColor #FFFFFF
@@ -36,7 +37,7 @@ package "Frontend" #LightGreen {
     }
     
     package "HTTP Client" #LightBlue {
-        [provideHttpClient()] as http_client
+        [provideHttpClient] as http_client
     }
 }
 

@@ -1,0 +1,31 @@
+@startuml C1_System_Context
+
+skinparam backgroundColor #FFFFFF
+skinparam defaultFontName Arial
+skinparam defaultFontSize 14
+
+left to right direction
+
+actor "User (End User)" as user
+
+rectangle "Todo List with Calendar\nSystem" as system {
+}
+
+rectangle "Browser\n(Chrome/Firefox/Edge)" as browser #LightBlue
+rectangle "File System\n(data.json)" as storage #LightYellow
+
+user --> system : Authenticates\nand Interacts
+system --> browser : Serves Angular SPA
+system --> storage : CRUD Operations
+user --> browser : Views UI
+
+note right of user
+  End user managing
+  todos and calendar events
+end note
+
+note right of storage
+  Server-side persistent\nJSON storage
+end note
+
+@enduml

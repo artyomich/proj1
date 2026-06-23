@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { CalendarEvent } from './models';
@@ -7,8 +7,9 @@ import { CalendarEvent } from './models';
   providedIn: 'root'
 })
 export class CalendarService {
-  private http = inject(HttpClient);
   private apiUrl = 'http://localhost:8000/api';
+
+  constructor(private http: HttpClient) {}
 
   getEvents(): Observable<CalendarEvent[]> {
     return this.http.get<CalendarEvent[]>(`${this.apiUrl}/calendar/events`);
